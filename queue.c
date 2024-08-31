@@ -14,15 +14,33 @@
 /* Create an empty queue */
 struct list_head *q_new()
 {
-    return NULL;
+    struct list_head *head =
+        (struct list_head *) malloc(sizeof(struct list_head));
+    if (!head) {
+        printf("malloc failed\n");
+        return NULL;
+    }
+    INIT_LIST_HEAD(head);
+    return head;
 }
 
 /* Free all storage used by queue */
-void q_free(struct list_head *head) {}
+void q_free(struct list_head *head)
+{
+    // iterate the doubly linked list: free the memory of each node and list_del
+    struct list_head *node, *tmp;
+    list_for_each_safe (node, tmp, head) {
+        list_del(node);
+        free(node);
+    }
+    list_del(head);
+    free(head);
+}
 
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+
     return true;
 }
 
