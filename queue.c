@@ -28,19 +28,22 @@ struct list_head *q_new()
 void q_free(struct list_head *head)
 {
     // iterate the doubly linked list: free the memory of each node and list_del
-    struct list_head *node, *tmp;
-    list_for_each_safe (node, tmp, head) {
-        list_del(node);
-        free(node);
+    // consider the case that head is NULL
+    if (!head) {
+        return;
     }
-    list_del(head);
+    struct list_head *node, *tmp;
+    // free the memory of entry by call the function q_release_element
+    list_for_each_safe (node, tmp, head) {
+        element_t *entry = list_entry(node, element_t, list);
+        q_release_element(entry);
+    }
     free(head);
 }
 
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
-
     return true;
 }
 
