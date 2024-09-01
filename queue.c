@@ -44,31 +44,89 @@ void q_free(struct list_head *head)
 /* Insert an element at head of queue */
 bool q_insert_head(struct list_head *head, char *s)
 {
+    // check the head and the string s
+    if (!head || !s) {
+        return false;
+    }
+    element_t *element = (element_t *) malloc(sizeof(element_t));
+    if (!element) {
+        return false;
+    }
+    element->value = (char *) malloc(strlen(s) + 1);
+    if (!element->value) {
+        free(element);
+        return false;
+    }
+    strncpy(element->value, s, strlen(s) + 1);
+    list_add(&element->list, head);
     return true;
 }
 
 /* Insert an element at tail of queue */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    if (!head || !s) {
+        return false;
+    }
+    element_t *element = (element_t *) malloc(sizeof(element_t));
+    if (!element) {
+        return false;
+    }
+    element->value = (char *) malloc(strlen(s) + 1);
+    if (!element->value) {
+        free(element);
+        return false;
+    }
+    strncpy(element->value, s, strlen(s) + 1);
+    list_add_tail(&element->list, head);
     return true;
 }
 
 /* Remove an element from head of queue */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return NULL;
+    if (!head || list_empty(head)) {
+        return NULL;
+    }
+    struct list_head *node = head->next;
+    list_del(node);
+    element_t *element = list_entry(node, element_t, list);
+    // copy the removed string to *sp
+    if (sp && element->value) {
+        strncpy(sp, element->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    }
+    return element;
 }
 
 /* Remove an element from tail of queue */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    return NULL;
+    if (!head || list_empty(head)) {
+        return NULL;
+    }
+    struct list_head *node = head->prev;
+    list_del(node);
+    element_t *element = list_entry(node, element_t, list);
+    if (sp && element->value) {
+        strncpy(sp, element->value, bufsize - 1);
+        sp[bufsize - 1] = '\0';
+    }
+    return element;
 }
 
 /* Return number of elements in queue */
 int q_size(struct list_head *head)
 {
-    return -1;
+    if (!head || list_empty(head)) {
+        return 0;
+    }
+    int count = 0;
+    struct list_head *node;
+    list_for_each (node, head) {
+        count++;
+    }
+    return count;
 }
 
 /* Delete the middle node in queue */
